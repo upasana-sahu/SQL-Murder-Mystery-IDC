@@ -1,12 +1,13 @@
-🕵️‍♂️ SQL Murder Mystery — Who Killed the CEO?
+# 🕵️‍♂️ SQL Murder Mystery — Who Killed the CEO?
 🗂️ A 21-Day SQL Challenge Project
-🧠 Background Story
+
+## Background Story
 
 The CEO of TechNova Inc. was found dead in their office on
 📅 October 15, 2025
 🕘 9:00 PM
 
-You have been assigned as the lead data analyst to solve the case using SQL.
+I have been assigned as the lead data analyst to solve the case using SQL.
 All clues are hidden across several tables in the company database:
 
 🔑 keycard logs
@@ -17,11 +18,11 @@ All clues are hidden across several tables in the company database:
 
 🧤 evidence from different rooms
 
-Your mission:
+Mission:
 
 Find out who killed the CEO, how, where, and when — using only SQL.
 
-🗃️ Database Schema
+## 🗃️ Database Schema
 
 The database (via the provided SQL file) contains:
 
@@ -62,14 +63,16 @@ evidence
 
 ## 🕵️ Let the investigation begin…  
 
-🔎 1️⃣ Step 1 — Where & when did the crime happen?  
+#### 🔎 1️⃣ Step 1 — Where & when did the crime happen?  
 ```
 SELECT *
 FROM evidence
 WHERE room LIKE '%CEO%'
 ORDER BY found_time;
+```
 
-🚪 2️⃣ Step 2 — Who accessed the CEO’s Office around the murder time?
+#### 🚪 2️⃣ Step 2 — Who accessed the CEO’s Office around the murder time?
+```
 SELECT k.log_id, k.employee_id, e.name, e.department, e.role,
        k.room, k.entry_time, k.exit_time
 FROM keycard_logs k
@@ -77,8 +80,9 @@ JOIN employees e ON e.employee_id = k.employee_id
 WHERE (k.room LIKE '%CEO%' OR k.room = 'CEO Office')
   AND k.entry_time BETWEEN '2025-10-15 20:30:00' AND '2025-10-15 21:30:00'
 ORDER BY k.entry_time;
-
-🕒 3️⃣ Step 3 — Who lied about their alibi?
+```
+#### 🕒 3️⃣ Step 3 — Who lied about their alibi?
+```
 SELECT a.alibi_id, a.employee_id, emp.name, a.claimed_location, a.claim_time
 FROM alibis a
 JOIN employees emp ON emp.employee_id = a.employee_id
@@ -90,8 +94,9 @@ WHERE NOT EXISTS (
       AND k.entry_time <= a.claim_time
       AND k.exit_time >= a.claim_time
 );
+```
 
-📞 4️⃣ Step 4 — Who made suspicious calls at 20:50–21:00?
+#### 📞 4️⃣ Step 4 — Who made suspicious calls at 20:50–21:00?
 SELECT c.call_id, ca.name AS caller, re.name AS receiver,
        c.call_time, c.duration_sec
 FROM calls c
