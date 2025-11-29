@@ -37,6 +37,8 @@ Below are the **6 investigation steps**, each with a SQL query to solve them.
 
 ---
 
+## Let the Investigation begin....
+
 ## **1️⃣ Step 1 — Where & when did the crime happen?**
 
 ```sql
