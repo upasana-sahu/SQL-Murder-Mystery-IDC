@@ -165,11 +165,11 @@ AND e.employee_id IN (
 
 ## 🧾 Conclusion / Explanation
 
-Using SQL joins, filtering, and CTEs, I narrowed down the suspect pool based on:
+Using SQL joins, filtering, and CTEs, I narrowed down the suspect based on:
 
-✔ presence at the CEO’s Office
-✔ suspicious phone calls
-✔ a false alibi
+✔ presence at the CEO’s Office  
+✔ suspicious phone calls  
+✔ a false alibi  
 ✔ proximity to the evidence  
 
 - Keycard logs show someone entered the CEO’s office shortly before the murder.
