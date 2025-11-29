@@ -45,7 +45,8 @@ Copy code
 SELECT *
 FROM evidence
 WHERE room LIKE '%CEO%'
-ORDER BY found_time;
+ORDER BY found_time;  
+
 2️⃣ Step 2 — Who entered the CEO’s Office near the time of the murder?
 Time window: 20:30–21:30 on Oct 15, 2025
 
@@ -57,7 +58,8 @@ FROM keycard_logs k
 JOIN employees e ON e.employee_id = k.employee_id
 WHERE (k.room LIKE '%CEO%' OR k.room = 'CEO Office')
   AND k.entry_time BETWEEN '2025-10-15 20:30:00' AND '2025-10-15 21:30:00'
-ORDER BY k.entry_time;
+ORDER BY k.entry_time;  
+
 3️⃣ Step 3 — Who lied about their alibi?
 sql
 Copy code
@@ -71,7 +73,8 @@ WHERE NOT EXISTS (
       AND k.room = a.claimed_location
       AND k.entry_time <= a.claim_time
       AND k.exit_time >= a.claim_time
-);
+);  
+
 4️⃣ Step 4 — Suspicious calls between 20:50–21:00
 sql
 Copy code
@@ -81,7 +84,8 @@ FROM calls c
 LEFT JOIN employees ca ON ca.employee_id = c.caller_id
 LEFT JOIN employees re ON re.employee_id = c.receiver_id
 WHERE c.call_time BETWEEN '2025-10-15 20:50:00' AND '2025-10-15 21:00:00'
-ORDER BY c.call_time;
+ORDER BY c.call_time;  
+
 5️⃣ Step 5 — Match movement with evidence found
 sql
 Copy code
@@ -93,7 +97,8 @@ LEFT JOIN keycard_logs k
       AND NOT (k.exit_time < ev.found_time OR k.entry_time > ev.found_time)
 LEFT JOIN employees emp ON emp.employee_id = k.employee_id
 WHERE ev.room LIKE '%CEO%'
-ORDER BY ev.found_time;
+ORDER BY ev.found_time;  
+
 6️⃣ Step 6 — Combine all suspicious behavior (MySQL)
 sql
 Copy code
@@ -131,7 +136,7 @@ WHERE e.employee_id IN (SELECT employee_id FROM in_office)
   AND e.employee_id IN (SELECT employee_id FROM bad_alibi);
 ✔ Fully MySQL 8.0 compliant
 ✔ CTEs (WITH) supported since MySQL 8.0
-✔ LIKE matches case-insensitively by default
+✔ LIKE matches case-insensitively by default  
 
 🕵️ Final Killer Query (MySQL, Single Column)
 sql
