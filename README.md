@@ -1,51 +1,73 @@
-# 🕵️ SQL Murder Mystery — *Who Killed the CEO?*  
-For the **21 Days SQL Challenge** by **Indian Data Club**
+🕵️‍♂️ SQL Murder Mystery — Who Killed the CEO?
+🗂️ A 21-Day SQL Challenge Project
+🧠 Background Story
 
----
+The CEO of TechNova Inc. was found dead in their office on
+📅 October 15, 2025
+🕘 9:00 PM
 
-## 🧩 **Story / Background**
+You have been assigned as the lead data analyst to solve the case using SQL.
+All clues are hidden across several tables in the company database:
 
-The CEO of **TechNova Inc.** was found dead in their office on:
+🔑 keycard logs
 
-**📅 October 15, 2025 — 🕘 9:00 PM**
+📞 call records
 
-Your mission: use SQL to uncover **who murdered the CEO**, **when**, **where**, and **how** — using only the company’s internal databases:
+🕒 employee alibis
 
-- Keycard logs  
-- Call records  
-- Alibis  
-- Physical evidence  
-- Employee registry  
+🧤 evidence from different rooms
 
-All clues are hidden across these tables.
+Your mission:
 
----
+Find out who killed the CEO, how, where, and when — using only SQL.
 
-## 🗂 **Database Schema**
+🗃️ Database Schema
 
-Tables:  
-`employees`, `keycard_logs`, `calls`, `alibis`, `evidence`
+The database (via the provided SQL file) contains:
 
-> Load the dataset using the included file:  
-> **SQL_Murder_Mystery.sql**
+employees
+Column	Type
+employee_id	INT
+name	VARCHAR
+department	VARCHAR
+role	VARCHAR
+keycard_logs
+Column	Type
+log_id	INT
+employee_id	INT
+room	VARCHAR
+entry_time	TIMESTAMP
+exit_time	TIMESTAMP
+calls
 
----
+| call_id | INT |
+| caller_id | INT |
+| receiver_id | INT |
+| call_time | TIMESTAMP |
+| duration_sec | INT |
 
-# 🔍 **Investigation Steps & SQL Queries**
+alibis
 
-Below are the **6 investigation steps**, each with a SQL query to solve them.
+| alibi_id | INT |
+| employee_id | INT |
+| claimed_location | VARCHAR |
+| claim_time | TIMESTAMP |
 
----
+evidence
 
-🕵️ **Let the investigation begin…**
+| evidence_id | INT |
+| room | VARCHAR |
+| description | VARCHAR |
+| found_time | TIMESTAMP |
 
-1️⃣ Step 1 — Where & when did the crime happen?
+🕵️ Let the investigation begin…
+🔎 1️⃣ Step 1 — Where & when did the crime happen?
 SELECT *
 FROM evidence
 WHERE room LIKE '%CEO%'
 ORDER BY found_time;
 
-2️⃣ Step 2 — Who entered the CEO’s Office near the murder time?
+🚪 2️⃣ Step 2 — Who accessed the CEO’s Office around the murder time?
 SELECT k.log_id, k.employee_id, e.name, e.department, e.role,
        k.room, k.entry_time, k.exit_time
 FROM keycard_logs k
@@ -54,7 +76,7 @@ WHERE (k.room LIKE '%CEO%' OR k.room = 'CEO Office')
   AND k.entry_time BETWEEN '2025-10-15 20:30:00' AND '2025-10-15 21:30:00'
 ORDER BY k.entry_time;
 
-3️⃣ Step 3 — Who lied about their alibi?
+🕒 3️⃣ Step 3 — Who lied about their alibi?
 SELECT a.alibi_id, a.employee_id, emp.name, a.claimed_location, a.claim_time
 FROM alibis a
 JOIN employees emp ON emp.employee_id = a.employee_id
@@ -67,7 +89,7 @@ WHERE NOT EXISTS (
       AND k.exit_time >= a.claim_time
 );
 
-4️⃣ Step 4 — Suspicious calls between 20:50–21:00
+📞 4️⃣ Step 4 — Who made suspicious calls at 20:50–21:00?
 SELECT c.call_id, ca.name AS caller, re.name AS receiver,
        c.call_time, c.duration_sec
 FROM calls c
@@ -76,7 +98,7 @@ LEFT JOIN employees re ON re.employee_id = c.receiver_id
 WHERE c.call_time BETWEEN '2025-10-15 20:50:00' AND '2025-10-15 21:00:00'
 ORDER BY c.call_time;
 
-5️⃣ Step 5 — Match movement with evidence found
+🧪 5️⃣ Step 5 — Whose movements overlap with found evidence?
 SELECT ev.evidence_id, ev.description, ev.found_time,
        k.employee_id, emp.name, k.entry_time, k.exit_time
 FROM evidence ev
@@ -87,10 +109,7 @@ LEFT JOIN employees emp ON emp.employee_id = k.employee_id
 WHERE ev.room LIKE '%CEO%'
 ORDER BY ev.found_time;
 
-6️⃣ Step 6 — Combine suspicious behavior (presence + calls + bad alibi)
-
-MySQL 8.0+ supports CTEs, so this works.
-
+🧩 6️⃣ Step 6 — Combine all clues and narrow down suspects
 WITH in_office AS (
     SELECT DISTINCT employee_id
     FROM keycard_logs
@@ -124,7 +143,10 @@ WHERE e.employee_id IN (SELECT employee_id FROM in_office)
   AND e.employee_id IN (SELECT employee_id FROM call_window)
   AND e.employee_id IN (SELECT employee_id FROM bad_alibi);
 
-🕵️ FINAL QUERY — Reveal the Killer (Single Column Output)
+🗡️ FINAL QUERY — Identify the Killer
+
+(As required: single column named killer)
+
 SELECT e.name AS killer
 FROM employees e
 WHERE e.employee_id IN (
@@ -151,22 +173,15 @@ AND e.employee_id IN (
   )
 );
 
-📝 Short Explanation — How We Caught the Killer
-Evidence confirmed the murder occurred inside the CEO’s Office at around 9 PM.
+🧾 Conclusion / Explanation
 
-Keycard logs narrowed suspects to those who entered the office between 20:30–21:30.
+Using SQL joins, filtering, and CTEs, we narrowed down the suspect pool based on:
 
-Call logs showed a suspicious call just minutes before the murder.
+✔ presence at the CEO’s Office
+✔ suspicious phone calls
+✔ a false alibi
+✔ proximity to the evidence
 
-Alibi comparison exposed a suspect who lied about their whereabouts.
-
-Combining:
-
-presence at the scene,
-
-suspicious phone activity,
-
-and a false alibi
-…identified one employee who matched all three red flags.
+All clues converge on one employee, revealed in the Final Query.
 
 🎯 Running the final query reveals the murderer.
