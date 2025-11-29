@@ -174,4 +174,6 @@ Using SQL joins, filtering, and CTEs, I narrowed down the suspect pool based on:
 
 All clues converge on one employee, revealed in the Final Query.
 
+
+[All the queries](Murder_Mystery_Queries.sql)  
 🎯 Running the final query reveals the murderer.
