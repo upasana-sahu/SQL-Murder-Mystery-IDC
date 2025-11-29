@@ -39,30 +39,22 @@ Below are the **6 investigation steps**, each with a SQL query to solve them.
 
 🕵️ **Let the investigation begin…**
 
-1️⃣ Step 1 — Where & when did the crime happen? (MySQL)
-sql
-Copy code
+1️⃣ Step 1 — Where & when did the crime happen?
 SELECT *
 FROM evidence
 WHERE room LIKE '%CEO%'
-ORDER BY found_time;  
+ORDER BY found_time;
 
-2️⃣ Step 2 — Who entered the CEO’s Office near the time of the murder?
-Time window: 20:30–21:30 on Oct 15, 2025
-
-sql
-Copy code
+2️⃣ Step 2 — Who entered the CEO’s Office near the murder time?
 SELECT k.log_id, k.employee_id, e.name, e.department, e.role,
        k.room, k.entry_time, k.exit_time
 FROM keycard_logs k
 JOIN employees e ON e.employee_id = k.employee_id
 WHERE (k.room LIKE '%CEO%' OR k.room = 'CEO Office')
   AND k.entry_time BETWEEN '2025-10-15 20:30:00' AND '2025-10-15 21:30:00'
-ORDER BY k.entry_time;  
+ORDER BY k.entry_time;
 
 3️⃣ Step 3 — Who lied about their alibi?
-sql
-Copy code
 SELECT a.alibi_id, a.employee_id, emp.name, a.claimed_location, a.claim_time
 FROM alibis a
 JOIN employees emp ON emp.employee_id = a.employee_id
@@ -73,22 +65,18 @@ WHERE NOT EXISTS (
       AND k.room = a.claimed_location
       AND k.entry_time <= a.claim_time
       AND k.exit_time >= a.claim_time
-);  
+);
 
 4️⃣ Step 4 — Suspicious calls between 20:50–21:00
-sql
-Copy code
 SELECT c.call_id, ca.name AS caller, re.name AS receiver,
        c.call_time, c.duration_sec
 FROM calls c
 LEFT JOIN employees ca ON ca.employee_id = c.caller_id
 LEFT JOIN employees re ON re.employee_id = c.receiver_id
 WHERE c.call_time BETWEEN '2025-10-15 20:50:00' AND '2025-10-15 21:00:00'
-ORDER BY c.call_time;  
+ORDER BY c.call_time;
 
 5️⃣ Step 5 — Match movement with evidence found
-sql
-Copy code
 SELECT ev.evidence_id, ev.description, ev.found_time,
        k.employee_id, emp.name, k.entry_time, k.exit_time
 FROM evidence ev
@@ -97,11 +85,12 @@ LEFT JOIN keycard_logs k
       AND NOT (k.exit_time < ev.found_time OR k.entry_time > ev.found_time)
 LEFT JOIN employees emp ON emp.employee_id = k.employee_id
 WHERE ev.room LIKE '%CEO%'
-ORDER BY ev.found_time;  
+ORDER BY ev.found_time;
 
-6️⃣ Step 6 — Combine all suspicious behavior (MySQL)
-sql
-Copy code
+6️⃣ Step 6 — Combine suspicious behavior (presence + calls + bad alibi)
+
+MySQL 8.0+ supports CTEs, so this works.
+
 WITH in_office AS (
     SELECT DISTINCT employee_id
     FROM keycard_logs
@@ -134,13 +123,8 @@ FROM employees e
 WHERE e.employee_id IN (SELECT employee_id FROM in_office)
   AND e.employee_id IN (SELECT employee_id FROM call_window)
   AND e.employee_id IN (SELECT employee_id FROM bad_alibi);
-✔ Fully MySQL 8.0 compliant
-✔ CTEs (WITH) supported since MySQL 8.0
-✔ LIKE matches case-insensitively by default  
 
-🕵️ Final Killer Query (MySQL, Single Column)
-sql
-Copy code
+🕵️ FINAL QUERY — Reveal the Killer (Single Column Output)
 SELECT e.name AS killer
 FROM employees e
 WHERE e.employee_id IN (
