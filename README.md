@@ -20,7 +20,7 @@ All clues are hidden across several tables in the company database:
 
 Mission:
 
-Find out who killed the CEO, how, where, and when — using only SQL.
+Find out who killed the CEO, how, where and when — using only SQL.
 
 ## 🗃️ Database Schema
 
@@ -165,7 +165,7 @@ AND e.employee_id IN (
 
 ## 🧾 Conclusion / Explanation
 
-Using SQL joins, filtering, and CTEs, we narrowed down the suspect pool based on:
+Using SQL joins, filtering, and CTEs, I narrowed down the suspect pool based on:
 
 ✔ presence at the CEO’s Office
 ✔ suspicious phone calls
