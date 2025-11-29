@@ -61,7 +61,8 @@ evidence
 | found_time | TIMESTAMP |
 
 🕵️ Let the investigation begin…
-🔎 1️⃣ Step 1 — Where & when did the crime happen?
+🔎 1️⃣ Step 1 — Where & when did the crime happen?  
+
 SELECT *
 FROM evidence
 WHERE room LIKE '%CEO%'
