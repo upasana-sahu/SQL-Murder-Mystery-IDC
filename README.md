@@ -135,7 +135,7 @@ WHERE e.employee_id IN (SELECT employee_id FROM in_office)
 ## 🗡️ FINAL QUERY — Identify the Killer
 
 (As required: single column named killer)
-
+```
 SELECT e.name AS killer
 FROM employees e
 WHERE e.employee_id IN (
@@ -161,6 +161,7 @@ AND e.employee_id IN (
         AND k2.exit_time >= a.claim_time
   )
 );
+```
 
 ## 🧾 Conclusion / Explanation
 
