@@ -170,7 +170,12 @@ Using SQL joins, filtering, and CTEs, I narrowed down the suspect pool based on:
 ✔ presence at the CEO’s Office
 ✔ suspicious phone calls
 ✔ a false alibi
-✔ proximity to the evidence
+✔ proximity to the evidence  
+
+- Keycard logs show someone entered the CEO’s office shortly before the murder.
+- Their claimed alibi does not align with actual movements recorded in the keycard logs.
+- A suspicious call was made just minutes before the crime.
+- Physical evidence in the CEO’s office, including fingerprints and keycard anomalies, matches the timing of their movements.
 
 All clues converge on one employee, revealed in the Final Query.
 
